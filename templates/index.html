@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Ledis Console{% endblock %}
+
+{% block content %}
+<h1>Welcome to Ledis!</h1>
+<div id="console">
+
+    <!-- input -->
+     <div class="console-line">
+        <span>$</span>
+        <input class="cmd" type="text" placeholder="Enter command here..."/>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // initalize te console
+    const consoleElement = document.getElementById('console');
+    const consoleLine = document.querySelector('.console-line');
+    const cmdInput = document.querySelector('.cmd');
+
+    // clear input field
+    cmdInput.value = '';
+
+    // add event listener for keypress
+    cmdInput.addEventListener('keydown', onKeyPress);
+
+    async function onKeyPress(e) {
+        console.log(e);
+        if (e.key === 'Enter') {
+            const command = e.target.value.trim();
+            if (command) {
+
+                // remove event listener to prevent multiple submissions
+                e.target.removeEventListener('keydown', onKeyPress);
+                
+                // simulate response
+                // const response = 'Executed command: ' + command;
+                // console.log(consoleElement)
+                const response = await getResponse(command)
+                console.log(response);
+
+                const responseElement = document.createElement('div');
+                responseElement.className = 'console-line';
+                responseElement.innerHTML = `${response}`;
+
+                // make another line for the next command
+                const newLineElement = document.createElement('div');
+                newLineElement.className = 'console-line';
+
+                const newLineSpan = document.createElement('span');
+                newLineSpan.textContent = '$';
+                const newLineInput = document.createElement('input');
+                newLineInput.className = 'cmd';
+                newLineInput.addEventListener('keydown', onKeyPress);
+                newLineInput.placeholder = 'Enter command here...';
+
+                // combine all together
+                newLineElement.append(newLineSpan, newLineInput);
+                consoleElement.append(responseElement, newLineElement);
+
+                // move cursor to the new input
+                newLineInput.focus();
+            }
+        }
+    }
+
+    async function getResponse(command) {
+        // make an AJAX post call to the server 
+        try {
+            console.log('Sending command to server:', command);
+            const res = await fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ command: command })
+            })
+            return res.text()
+        }
+        catch (error) {
+            console.error('Error:', error);
+            return 'ERROR sending command to server';
+        }
+
+    }
+</script>
+{% endblock %}

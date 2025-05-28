@@ -1,0 +1,21 @@
+<!-- BASE TEMPLATE - reduce boilerplate code -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Ledis{% endblock %}</title>
+
+  <!-- link css formating from static/css folder -->
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/main.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
+  <!-- Main page content -->
+  {% block content %}{% endblock %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>
