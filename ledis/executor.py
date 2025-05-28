@@ -1,5 +1,8 @@
 from ledis.datastore import DataStore
 from ledis.parser import CommandParser
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Executor:
     def __init__(self, db: DataStore, parser: CommandParser):
@@ -27,10 +30,12 @@ class Executor:
             cmd, args = self._parser.parse(command_str)
             if cmd in self._dispatch:
                 result = self._dispatch[cmd](*args)
-                print(f"Result: {result}")
+                logger.debug(f"Executed command: {cmd} with args: {args}, result: {result}")
+                if isinstance(result, (int, bool)):
+                    return f"(integer) {int(result)}"
                 return str(result)
             else:
-                print(f"Unknown command: {cmd}")
+                logger.debug(f"Unknown command: {cmd}")
                 return f"ERROR: Unknown command: {cmd}"
         except Exception as e:
             return f"ERROR: {str(e)}"

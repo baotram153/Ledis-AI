@@ -1,9 +1,35 @@
 from flask import Flask, request, render_template, jsonify, Response
+
+import logging
+from logging.config import dictConfig
+
 from ledis.datastore import DataStore
 from ledis.parser import CommandParser
 from ledis.executor import Executor
 
 app = Flask(__name__)
+
+# configure logging
+dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        }
+    },
+    'handlers': {
+        'default': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default'
+        }
+    },
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['default']
+    }
+})
+logger = logging.getLogger(__name__)
 
 data_store = DataStore()
 parser = CommandParser()
@@ -17,11 +43,11 @@ def index():
 def command():
     payload = request.get_json(silent=True) or {}
     cmd = payload.get("command", "").strip()
-    print(f"Received command: {cmd}")
+    logger.info(f"Received command: {cmd}")
     if not cmd or not isinstance(cmd, str):
         return Response("ERROR: No command provided", status=400, mimetype='text/plain')
     result = executor.execute(cmd)
-    print(f"Command result: {result}")
+    app.logger.info(f"Command result: {result}")
     return Response(result, mimetype='text/plain')
 
 if __name__ == "__main__":
