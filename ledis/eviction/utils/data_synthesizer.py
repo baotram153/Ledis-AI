@@ -17,8 +17,9 @@ REINESRT_PROB = 1             # prob of re-inserting a key that is recently evic
 READ_WS_PROB = 0.9            # prob of reading a key that is in the working set
 READ_SET_PROB = 0.8            # prob of reading a key that have been set recently
 
-
-EXPIRE_SET_PROB = 0.8           # prob of setting an expiry on a key -> not use
+EXPIRE_SET_PROB = 0.2           # prob of setting an expiry on a key -> not use
+EXPIRE_TIME_MIN = 2
+EXPIRE_TIME_MAX = 15            # expiry time range in seconds
 
 CAPACITY = 15                   # capacity of the live set (number of keys that can be stored)
 
@@ -78,6 +79,12 @@ def workload():
                 _ensure_materialized(key, live)
                 yield from _write(key, live)
                 
+            expire_prob = rng.random()
+            if expire_prob < EXPIRE_SET_PROB and live:
+                # set an expiry on a key
+                key = rng.choice(live)
+                yield f"EXPIRE {key} {rnd.randint(EXPIRE_TIME_MIN, EXPIRE_TIME_MAX)}"
+                
             # read a key (mimics LeCAR locality - 90% in WS, 10% noise)
             read_prob = rng.random()
             if read_prob < READ_WS_PROB:
@@ -117,6 +124,7 @@ def _write(key, live):
     """
     # full_key = f"k{key}"
     full_key = key
+    value = f"v{key[1:]}"
     
     # insert the key to the live set
     live.append(full_key)
@@ -125,7 +133,7 @@ def _write(key, live):
     # insert key to the recently set deque
     recently_set.append(full_key)
     
-    yield f"SET {full_key}"  # value is not important for this model
+    yield f"SET {full_key} {value}"  # value is not important for this model
     
 def _read(key):
     """

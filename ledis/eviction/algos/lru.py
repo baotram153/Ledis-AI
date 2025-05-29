@@ -14,6 +14,21 @@ class LRU:
         self._lru_queue = list()
         self._kv_store = kv_store  # Reference to the key-value store
         
+        # params to calculate eviction metrics
+        self._hits = 0
+        self._misses = 0
+        self._sets = 0
+        self._n_evicts = 0
+        self._delta = 10
+        self._recently_evicted = deque(maxlen=self._delta)     # track if evicted key is reused within a time delta
+        self._n_reuse_evicts = 0
+        
+    def get_hits(self) -> int:
+        return self._hits
+    
+    def get_sets(self) -> int:
+        return self._sets
+        
     def update(self, key:str, is_set:bool) -> None:
         """
         Update the LRU queue with the given key.
@@ -22,6 +37,24 @@ class LRU:
           - Sync queue with kv_store to ensure consistency.
           - Call evict if the queue exceeds the capacity.
         """
+        # --------------- METRICS BOOKKEEPING ------------------
+        key_list = self._kv_store._get_key_list()
+        key_len = self._kv_store._get_key_len()
+        
+        in_cache = key in key_list
+        if is_set:
+            self._sets += 1
+            if key in self._recently_evicted:
+                self._recently_evicted.remove(key)       
+        else:
+            if in_cache:
+                self._hits += 1
+            else:
+                self._misses += 1 
+                if key in self._recently_evicted:
+                    self._n_reuse_evicts += 1
+        
+        # --------------- NORMAL LRU BOOKKEEPING ------------------
         if key in self._lru_queue:
             self._lru_queue.remove(key) 
             self._lru_queue.append(key)
@@ -32,8 +65,8 @@ class LRU:
             return None
         
         # update LRU queue to sync with kv_stote (deletion or expiration noticed)
-        if self._kv_store._get_key_len() < len(self._lru_queue):
-            self._lru_queue = [k for k in self._lru_queue if k in self._kv_store._get_key_list()]
+        if key_len < len(self._lru_queue):
+            self._lru_queue = [k for k in self._lru_queue if k in key_list]
             
         # if lru queue exceeds capacity, evict the least recently used key
         if len(self._lru_queue) > self._capacity:
@@ -47,4 +80,19 @@ class LRU:
         """
         victim = self._lru_queue.pop(0)
         self._kv_store.delete_key(victim)
+        self._n_evicts += 1
+        self._recently_evicted.append(victim)
         return victim
+    
+    def get_metrics(self) -> dict:
+        """
+        Get the eviction metrics.
+        """
+        return {
+            "hits": self._hits,
+            "misses": self._misses,
+            "sets": self._sets,
+            "n_evicts": self._n_evicts,
+            "n_reuse_evicts": self._n_reuse_evicts,
+            "delta": self._delta,
+        }
