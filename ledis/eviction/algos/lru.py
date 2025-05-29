@@ -5,6 +5,9 @@ Base LRU eviction algorithm implementation.
 from collections import deque
 from ledis.datastore import DataStore
 
+import logging
+logger = logging.getLogger(__name__)
+
 class LRU:
     """
     How to update the recently used keys when key expired
@@ -42,6 +45,7 @@ class LRU:
         key_len = self._kv_store._get_key_len()
         
         in_cache = key in key_list
+        # logger.info(f"is set: {is_set}, in cache: {in_cache}, key: {key}, key list: {key_list}")
         if is_set:
             self._sets += 1
             if key in self._recently_evicted:

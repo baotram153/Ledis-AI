@@ -96,6 +96,7 @@ def workload():
                 else: key = rng.choice(hot_keys)
             _ensure_materialized(key, live)
             yield from _read(key)
+        # yield "END_PHASE"  # signal the end of the phase
             
             
 

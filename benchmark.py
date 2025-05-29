@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # initialize benchmarker
     data_store = DataStore()
     parser = CommandParser()
-    eviction_manager = EvictionManager(data_store, algo_name="lru")
+    eviction_manager = EvictionManager(data_store, algo_name="lfu")
     
     # Create a benchmarker instance
     benchmarker = Benchmarker(data_store, parser, eviction_manager, eviction_window=10)

@@ -2,11 +2,13 @@ import logging
 from ledis.datastore import DataStore
 
 from ledis.eviction.algos.lru import LRU
-# from ledis.eviction.algos.lfu import LFU
+from ledis.eviction.algos.lfu import LFU
 # from ledis.eviction.random import Random
 # from ledis.eviction.rl import RL
 
 from typing import Union, Optional
+
+logger = logging.getLogger(__name__)
 
 class KeyMetadata:
     def __init__(self, last_accessed: float, hits: int, sets: int, ttl: int):
@@ -26,20 +28,20 @@ class EvictionManager:
             + "lru", "lfu", "random", "rl"
         - `model`: machine learning model for smart eviction.
     """
-    def __init__(self, kv_store: DataStore, algo_name: str="lru", model=None):
+    def __init__(self, kv_store: DataStore, algo_name: str="lru", eviction_window=10, model=None):
         self._kv_store = kv_store
         self._algo_name = algo_name
         
         self._parser = {
             "lru": LRU,
-            # "lfu": LFU,
+            "lfu": LFU,
             # "random": algos.random.Random,
             # "rl": algos.rl.RL
         }
         
         self._model = model
         
-        self._eviction_window = 0
+        self._eviction_window = eviction_window
 
     def get_eviction_window(self) -> int:
         return self._eviction_window
