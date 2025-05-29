@@ -52,7 +52,19 @@ class DataStore:
         This is a lazy cleanup, called before any operation that requires checking key existence
         """
         list(map(lambda k : self._alive(k), list(self._store.keys())))
+    
+    def _get_key_len(self) -> int:
+        with self._lock:
+            self._purge_expired()
+            return len(self._store)
         
+    def _get_key_list(self) -> List[str]:
+        """
+        Get a list of all keys in the store
+        """
+        with self._lock:
+            self._purge_expired()
+            return list(self._store.keys())
     """
     -----------------------STRING OPERATORS-------------------------
     """

@@ -1,4 +1,7 @@
 from typing import Any, Optional, Tuple
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CommandParser:
     def __init__(self):
@@ -14,7 +17,8 @@ class CommandParser:
             "del": (1, 1),
             "flushdb": (0, 0),
             "expire": (2, 2),
-            "ttl": (1, 1)
+            "ttl": (1, 1),
+            "smart_eviction": (1, 1),  # e.g., smart_eviction 100
         }
         
     def parse(self, command: str) -> Tuple:
@@ -23,6 +27,7 @@ class CommandParser:
         Return a tupe of (command_name, args)
         """
         parts = command.strip().split()
+        logger.debug(f"Parts after split: {parts}")
         if not parts:
             raise ValueError("Empty command")
 

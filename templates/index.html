@@ -39,12 +39,20 @@
                 // simulate response
                 // const response = 'Executed command: ' + command;
                 // console.log(consoleElement)
-                const response = await getResponse(command)
-                console.log(response);
+                const responses = await getResponse(command)
+                console.log(responses);
+                
+                responses.forEach(response => {
+                    // create a new div for the response
+                    const responseElement = document.createElement('div');
+                    responseElement.className = 'console-line';
+                    responseElement.innerHTML = `${response}`;
+                    consoleElement.appendChild(responseElement);
+                });
 
-                const responseElement = document.createElement('div');
-                responseElement.className = 'console-line';
-                responseElement.innerHTML = `${response}`;
+                // const responseElement = document.createElement('div');
+                // responseElement.className = 'console-line';
+                // responseElement.innerHTML = `${response}`;
 
                 // make another line for the next command
                 const newLineElement = document.createElement('div');
@@ -59,7 +67,7 @@
 
                 // combine all together
                 newLineElement.append(newLineSpan, newLineInput);
-                consoleElement.append(responseElement, newLineElement);
+                consoleElement.append(newLineElement);
 
                 // move cursor to the new input
                 newLineInput.focus();
@@ -78,7 +86,11 @@
                 },
                 body: JSON.stringify({ command: command })
             })
-            return res.text()
+            console.log('Response received from server:', res)
+            
+            const raw = await res.text()
+            const lines = raw.split('\n')
+            return lines
         }
         catch (error) {
             console.error('Error:', error);
