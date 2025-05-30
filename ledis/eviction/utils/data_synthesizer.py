@@ -6,9 +6,9 @@ from collections import deque
 # Eviction window is passed in as an input to the model
 
 # ----------------- CONFIGURATIONS ----------------
-NUM_PHASES = 4                  # number of working phases in the workload
-WORKING_SET_SIZE = 25           # hot keys per phase
-N_COMMANDS_PER_PHASE = 50       # number of commands per phase
+NUM_PHASES = 10                  # number of working phases in the workload
+WORKING_SET_SIZE = 50           # hot keys per phase
+N_COMMANDS_PER_PHASE = 200       # number of commands per phase
 
 INSERT_WS_PROB = 0.8            # prob of inserting a key in hot keys of that phase
 INSERT_NOISE = 0.05             # prob of inserting a key that is outside hot keys 
@@ -21,7 +21,7 @@ EXPIRE_SET_PROB = 0.2           # prob of setting an expiry on a key -> not use
 EXPIRE_TIME_MIN = 2
 EXPIRE_TIME_MAX = 15            # expiry time range in seconds
 
-CAPACITY = 15                   # capacity of the live set (number of keys that can be stored)
+CAPACITY = 30                   # capacity of the live set (number of keys that can be stored)
 
 # seed anything!
 rng = np.random.default_rng(42)

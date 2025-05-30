@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # write log to a file
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler("benchmark.log", encoding='utf-8'),
@@ -73,10 +73,10 @@ if __name__ == "__main__":
     # initialize benchmarker
     data_store = DataStore()
     parser = CommandParser()
-    eviction_manager = EvictionManager(data_store, algo_name="lfu")
+    eviction_manager = EvictionManager(data_store, algo_name="hybrid")
     
     # Create a benchmarker instance
-    benchmarker = Benchmarker(data_store, parser, eviction_manager, eviction_window=10)
+    benchmarker = Benchmarker(data_store, parser, eviction_manager, eviction_window=5)
     
     # get commands from file
     for cmd in command_stream("workload.txt"):

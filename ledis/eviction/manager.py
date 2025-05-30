@@ -3,6 +3,7 @@ from ledis.datastore import DataStore
 
 from ledis.eviction.algos.lru import LRU
 from ledis.eviction.algos.lfu import LFU
+from ledis.eviction.algos.hybrid import HybridEviction
 # from ledis.eviction.random import Random
 # from ledis.eviction.rl import RL
 
@@ -35,6 +36,7 @@ class EvictionManager:
         self._parser = {
             "lru": LRU,
             "lfu": LFU,
+            "hybrid": HybridEviction,
             # "random": algos.random.Random,
             # "rl": algos.rl.RL
         }

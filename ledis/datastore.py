@@ -31,7 +31,7 @@ class DataStore:
         """
         Check if the key exists and is not expired
         """
-        logger.debug(f"Checking if key '{key}' is alive")
+        # logger.debug(f"Checking if key '{key}' is alive")
         if not self._exists(key): return False
         _, expire = self._store.get(key, (None, float('inf')))
         if self._now() > expire :
