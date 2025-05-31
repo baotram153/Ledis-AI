@@ -55,7 +55,7 @@ class Executor:
                 
                 # handle eviction if enabled
                 if cmd == "smart_eviction": 
-                    if args[0] > 0: self.enable_eviction()
+                    if int(args[0]) > 0: self.enable_eviction()
                     else: self.disable_eviction()
                 if self._eviction_enabled and cmd not in ["smart_eviction", "keys", "flushdb"]:
                     set_key = args[0]
