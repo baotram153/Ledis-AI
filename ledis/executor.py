@@ -37,7 +37,7 @@ class Executor:
         end_result = ""
         logger.debug(f"Command string: {command_str}")
         if command_str.lower().startswith("chat "):
-            command_str = self._chatbot.translate(command_str)  # translate the command using chatbot
+            command_str = self._chatbot.translate(command_str[5:-1])  # translate the command using chatbot
             logger.debug(f"Translated command: {command_str}")
             end_result += command_str + "\n"
         try:

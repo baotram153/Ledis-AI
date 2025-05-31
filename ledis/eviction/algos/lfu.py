@@ -58,10 +58,10 @@ class LFU:
         # ------------ NORMAL LFU BOOKKEEPING --------------------
         logger.info(f"In cache: {in_cache}")
         if key in self._freq_map:
-            # key already cached → bump its frequency
+            # key already cached -> bump its frequency
             self._increment_freq(key)
         else:
-            if not is_set:                   # GET miss on absent key → done
+            if not is_set:                   # GET miss on absent key -> done
                 return None
 
             # Insert new key; evict if full first

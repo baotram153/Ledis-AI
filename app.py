@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 data_store = DataStore()
 parser = CommandParser()
-eviction_manager = EvictionManager(data_store, algo_name="rl")
+eviction_manager = EvictionManager(data_store, algo_name="lru")
 chatbot = LedisChat()
 executor = Executor(data_store, parser, eviction_manager, chatbot)
 

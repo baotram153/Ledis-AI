@@ -4,3 +4,4 @@ workload*.txt
 .env
 tensorboard_logs/*
 wandb/*
+.vercel

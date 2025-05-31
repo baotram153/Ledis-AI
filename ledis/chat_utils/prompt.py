@@ -11,137 +11,137 @@ All output must follow this pattern. If a command returns multiple values (e.g.,
 
 ---
 EXAMPLE 1:
-> CHAT 'Save the string “hello world” under key greeting'
+CHAT 'Save the string “hello world” under key greeting'
 
 SET greeting "hello world"
 
 Explanation (not part of returned output):
-- SET greeting "hello world" → stores the string value under key “greeting”
+- SET greeting "hello world" -> stores the string value under key “greeting”
 
 ---
 
 EXAMPLE 2:
-> CHAT 'What is stored at key greeting?'
+CHAT 'What is stored at key greeting?'
 
 GET greeting
 
 Explanation (not part of returned output):
-- GET greeting → fetches the string at “greeting”
+- GET greeting -> fetches the string at “greeting”
 
 ---
 
 EXAMPLE 3:
-> CHAT 'Add apple and orange to my shopping list'
+CHAT 'Add apple and orange to my shopping list'
 
 RPUSH shopping_list apple orange
 
 Explanation (not part of the returned output):
-- RPUSH shopping_list apple orange  ⇒ pushes “apple” and “orange” onto the list “shopping_list”
+- RPUSH shopping_list apple orange  -> pushes “apple” and “orange” onto the list “shopping_list”
 
 ---
 
 EXAMPLE 4:
-> CHAT 'Show me the first 2 things in my shopping list'
+CHAT 'Show me the first 2 things in my shopping list'
 
 LRANGE shopping_list 0 1
 
 Explanation (not part of the returned output):
-- LRANGE shopping_list 0 1  ⇒ retrieves elements in “shopping_list” at indices 0 and 1
+- LRANGE shopping_list 0 1  -> retrieves elements in “shopping_list” at indices 0 and 1
 
 ---
 
 EXAMPLE 5:
-> CHAT 'How many elements are in my “numbers” list?'
+CHAT 'How many elements are in my “numbers” list?'
 
 LLEN numbers
 
 Explanation (not part of returned output):
-- LLEN numbers → returns the length of list “numbers”
+- LLEN numbers -> returns the length of list “numbers”
 
 ---
 
 EXAMPLE 6:
-> CHAT 'Add 10, 20, and 30 to the “numbers” list'
+CHAT 'Add 10, 20, and 30 to the “numbers” list'
 
 RPUSH numbers 10 20 30
 
 Explanation (not part of returned output):
-- RPUSH numbers 10 20 30 → appends three elements to the list “numbers”
+- RPUSH numbers 10 20 30 -> appends three elements to the list “numbers”
 
 ---
 
 EXAMPLE 7:
-> CHAT 'Pop the first element from the “numbers” list'
+CHAT 'Pop the first element from the “numbers” list'
 
 LPOP numbers
 
 Explanation (not part of returned output):
-- LPOP numbers → removes and returns the first element (oldest) from “numbers”
+- LPOP numbers -> removes and returns the first element (oldest) from “numbers”
 
 ---
 
 EXAMPLE 8:
-> CHAT 'Show items 0 through 1 from the “numbers” list'
+CHAT 'Show items 0 through 1 from the “numbers” list'
 
 LRANGE numbers 0 1
 
 Explanation (not part of returned output):
-- LRANGE numbers 0 1 → returns elements at indices 0 and 1 (zero-based, inclusive)
+- LRANGE numbers 0 1 -> returns elements at indices 0 and 1 (zero-based, inclusive)
 
 ---
 
 EXAMPLE 9:
-> CHAT 'List all the keys currently stored'
+CHAT 'List all the keys currently stored'
 
 KEYS
 
 Explanation (not part of returned output):
-- KEYS → returns every key in the database (in arbitrary order)
+- KEYS -> returns every key in the database (in arbitrary order)
 
 ---
 
 EXAMPLE 8:
-> CHAT 'Remove the key “greeting”'
+CHAT 'Remove the key “greeting”'
 
 DEL greeting
 
 Explanation (not part of returned output):
-- DEL greeting → deletes the key if it exists
+- DEL greeting -> deletes the key if it exists
 
 ---
 
 EXAMPLE 9:
-> CHAT 'Clear all keys from the database'
+CHAT 'Clear all keys from the database'
 
 FLUSHDB
 
 Explanation (not part of returned output):
-- FLUSHDB → deletes every key in the current database
+- FLUSHDB -> deletes every key in the current database
 
 ---
 
 EXAMPLE 10:
-> CHAT 'Set key “temp” to expire after 60 seconds'
+CHAT 'Set key “temp” to expire after 60 seconds'
 
 EXPIRE temp 60
 
 Explanation (not part of returned output):
-- EXPIRE temp 60 → sets a TTL of 60 seconds on key “temp”
+- EXPIRE temp 60 -> sets a TTL of 60 seconds on key “temp”
 
 ---
 
 EXAMPLE 11:
-> CHAT 'How many seconds until key “session” expires?'
+CHAT 'How many seconds until key “session” expires?'
 
 TTL session
 
 Explanation (not part of returned output):
-- TTL session → queries the remaining time to live in seconds
+- TTL session -> queries the remaining time to live in seconds
 
 ---
 
 Now handle any new request in the same way.
 
-> CHAT '{user_nl_command}'
+CHAT '{user_nl_command}'
 
 """

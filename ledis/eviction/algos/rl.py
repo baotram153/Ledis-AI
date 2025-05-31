@@ -64,7 +64,7 @@ class RL(LRU):
     def _select_victim_rl(self) -> str:
         """
         Build the same feature vector your `EvictionEnv` expects,
-        run the PPO policy, map action → key.
+        run the PPO policy, map action -> key.
         """
         candidates = list(self._lru_queue)[: self.window_size]
         obs: List[float] = []
