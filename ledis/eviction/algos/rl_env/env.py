@@ -55,7 +55,7 @@ class EvictionEnv(gym.Env):
             cmd, args, is_set = self.trace[self.pos]
             if not isinstance(args, (list, tuple)):
                 args = [args]
-            # 1a) update the KV store
+            # update the KV store
             # logger.debug(f"Dispatching {cmd}({args})")
             self._dispatch[cmd](*args)
             # logger.debug(f"KV store state: {self.kv_store._get_key_list()}")

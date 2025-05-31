@@ -7,12 +7,12 @@ from collections import deque
 
 # ----------------- CONFIGURATIONS ----------------
 NUM_PHASES = 10                  # number of working phases in the workload
-WORKING_SET_SIZE = 50           # hot keys per phase
+WORKING_SET_SIZE = 100           # hot keys per phase
 N_COMMANDS_PER_PHASE = 200       # number of commands per phase
 
-INSERT_WS_PROB = 0.8            # prob of inserting a key in hot keys of that phase
-INSERT_NOISE = 0.05             # prob of inserting a key that is outside hot keys 
-REINESRT_PROB = 1             # prob of re-inserting a key that is recently evicted
+INSERT_WS_PROB = 0.6            # prob of inserting a key in hot keys of that phase
+INSERT_NOISE = 0.02             # prob of inserting a key that is outside hot keys 
+REINESRT_PROB = 0.8             # prob of re-inserting a key that is recently evicted
 
 READ_WS_PROB = 0.9            # prob of reading a key that is in the working set
 READ_SET_PROB = 0.8            # prob of reading a key that have been set recently
@@ -21,7 +21,7 @@ EXPIRE_SET_PROB = 0.2           # prob of setting an expiry on a key -> not use
 EXPIRE_TIME_MIN = 2
 EXPIRE_TIME_MAX = 15            # expiry time range in seconds
 
-CAPACITY = 30                   # capacity of the live set (number of keys that can be stored)
+CAPACITY = 20                   # capacity of the live set (number of keys that can be stored)
 
 # seed anything!
 rng = np.random.default_rng(42)
@@ -80,10 +80,10 @@ def workload():
                 yield from _write(key, live)
                 
             expire_prob = rng.random()
-            if expire_prob < EXPIRE_SET_PROB and live:
-                # set an expiry on a key
-                key = rng.choice(live)
-                yield f"EXPIRE {key} {rnd.randint(EXPIRE_TIME_MIN, EXPIRE_TIME_MAX)}"
+            # if expire_prob < EXPIRE_SET_PROB and live:
+            #     # set an expiry on a key
+            #     key = rng.choice(live)
+            #     yield f"EXPIRE {key} {rnd.randint(EXPIRE_TIME_MIN, EXPIRE_TIME_MAX)}"
                 
             # read a key (mimics LeCAR locality - 90% in WS, 10% noise)
             read_prob = rng.random()

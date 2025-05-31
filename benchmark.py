@@ -6,6 +6,8 @@ from ledis.parser import CommandParser
 from ledis.datastore import DataStore
 from ledis.eviction.metrics import EvictionMetrics
 
+import argparse
+
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -16,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 # write log to a file
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler("benchmark.log", encoding='utf-8'),
@@ -73,13 +75,29 @@ def command_stream(path: str):
             yield line.strip()
 
 if __name__ == "__main__":
+    # argument parser for choosing eviction algorithm
+    parser = argparse.ArgumentParser(description="Benchmark eviction algorithms.")
+    parser.add_argument(
+        "--algo",
+        type=str,
+        choices=["lru", "lfu", "hybrid"],
+        default="lru",
+        help="Eviction algorithm to use (default: lru)"
+    )
+    parser.add_argument(
+        "--window",
+        type=int,
+        default=10,
+        help="Eviction window size (default: 10)"
+    )
+    args = parser.parse_args()
     # initialize benchmarker
     data_store = DataStore()
     parser = CommandParser()
-    eviction_manager = EvictionManager(data_store, algo_name="lru")
+    eviction_manager = EvictionManager(data_store, algo_name=args.algo)
     
     # Create a benchmarker instance
-    benchmarker = Benchmarker(data_store, parser, eviction_manager, eviction_window=20)
+    benchmarker = Benchmarker(data_store, parser, eviction_manager, args.window)
     
     # get commands from file
     for cmd in command_stream("workload.txt"):

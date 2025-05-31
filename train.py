@@ -1,18 +1,21 @@
 import logging
 from pathlib import Path
+import argparse
 
 import gymnasium as gym
 import numpy as np
 
+import os
 import wandb
 from wandb.integration.sb3 import WandbCallback
+os.environ["WANDB_DISABLE_SYMLINK"] = "true"
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from ledis.parser import CommandParser
 from ledis.eviction.algos.lru import LRU, KeyMetadata
-from ledis.eviction.algos.rl import EvictionEnv
+from ledis.eviction.algos.rl_env.env import EvictionEnv
 from ledis.eviction.metrics import EvictionMetrics
 
 # -------------- Logging Setup --------------
@@ -47,11 +50,19 @@ def load_trace(path: str):
 # -------------- Trainer --------------
 
 def main():
+    # parse window size, n_keys
+    parser = argparse.ArgumentParser(description="Train a reinforcement learning model for eviction policy")
+    parser.add_argument("--window", type=int, default=10, help="Eviction window size")
+    parser.add_argument("--n_keys", type=int, default=10, help="Number of keys as input features")
+    parser.add_argument("--n_timesteps", type=int, default=300000, help="Total timesteps for training")
+    
+    args = parser.parse_args()
+    
     # Configuration
     trace_file = "workload.txt"
-    capacity = 20
-    eviction_window = 10
-    total_timesteps = 500000
+    capacity = args.window
+    window_size = args.n_keys
+    total_timesteps = args.n_timesteps
     model_path = "ledis/eviction/algos/rl_ckpt/"
     
     # initialize wandb logging
@@ -60,9 +71,9 @@ def main():
     name="ppo-eviction-run-1",      # optional, a unique run name
     config={
         "capacity": capacity,
-        "eviction_window": eviction_window,
+        "eviction_window": window_size,
         "total_timesteps": total_timesteps,
-        "learning_rate": 3e-5,
+        "learning_rate": 3e-4,
         "n_steps": 2048,
         "batch_size": 64,
         "ent_coef": 0.01,
@@ -77,7 +88,7 @@ def main():
 
     # Create Gym environment factory
     def make_env():
-        return EvictionEnv(trace, capacity=capacity, window_size=eviction_window)
+        return EvictionEnv(trace, capacity=capacity, window_size=window_size)
 
     env = DummyVecEnv([make_env])
 
