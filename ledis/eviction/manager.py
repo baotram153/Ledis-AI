@@ -4,8 +4,7 @@ from ledis.datastore import DataStore
 from ledis.eviction.algos.lru import LRU
 from ledis.eviction.algos.lfu import LFU
 from ledis.eviction.algos.hybrid import HybridEviction
-# from ledis.eviction.random import Random
-# from ledis.eviction.rl import RL
+from ledis.eviction.algos.rl import RL
 
 from typing import Union, Optional
 
@@ -37,8 +36,7 @@ class EvictionManager:
             "lru": LRU,
             "lfu": LFU,
             "hybrid": HybridEviction,
-            # "random": algos.random.Random,
-            # "rl": algos.rl.RL
+            "rl": RL,
         }
         
         self._model = model
@@ -54,7 +52,8 @@ class EvictionManager:
         """
         window = int(window)
         if window <= 0:
-            raise ValueError("Eviction window must be a positive integer.")
+            # raise ValueError("Eviction window must be a positive integer.")
+            window = 0  # window size < 0 meaning no eviction
         self._eviction_window = window
         self.set_algo(self._algo_name)
         return f"OK"

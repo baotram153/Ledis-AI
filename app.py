@@ -6,6 +6,7 @@ from logging.config import dictConfig
 from ledis.datastore import DataStore
 from ledis.parser import CommandParser
 from ledis.eviction.manager import EvictionManager
+from ledis.chat import LedisChat
 
 from ledis.executor import Executor
 
@@ -27,7 +28,7 @@ dictConfig({
         }
     },
     'root': {
-        'level': 'INFO',
+        'level': 'DEBUG',
         'handlers': ['default']
     }
 })
@@ -35,8 +36,9 @@ logger = logging.getLogger(__name__)
 
 data_store = DataStore()
 parser = CommandParser()
-eviction_manager = EvictionManager(data_store, algo_name="lru")
-executor = Executor(data_store, parser, eviction_manager)
+eviction_manager = EvictionManager(data_store, algo_name="rl")
+chatbot = LedisChat()
+executor = Executor(data_store, parser, eviction_manager, chatbot)
 
 @app.route("/", methods=["GET"])
 def index():

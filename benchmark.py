@@ -8,6 +8,9 @@ from ledis.eviction.metrics import EvictionMetrics
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -73,10 +76,10 @@ if __name__ == "__main__":
     # initialize benchmarker
     data_store = DataStore()
     parser = CommandParser()
-    eviction_manager = EvictionManager(data_store, algo_name="hybrid")
+    eviction_manager = EvictionManager(data_store, algo_name="lru")
     
     # Create a benchmarker instance
-    benchmarker = Benchmarker(data_store, parser, eviction_manager, eviction_window=5)
+    benchmarker = Benchmarker(data_store, parser, eviction_manager, eviction_window=20)
     
     # get commands from file
     for cmd in command_stream("workload.txt"):

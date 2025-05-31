@@ -5,13 +5,15 @@ import time
 from ledis.executor import Executor
 from ledis.parser import CommandParser
 from ledis.datastore import DataStore
+from ledis.eviction.manager import EvictionManager
 
 #-------------FIXTURES----------------
 @pytest.fixture
 def executor():
     db = DataStore()
     parser = CommandParser()
-    return Executor(db, parser)
+    eviction_manager = EvictionManager(db)
+    return Executor(db, parser, eviction_manager)
 
 
 #-------------STRING OPERATORS----------------

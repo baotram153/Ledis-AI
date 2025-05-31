@@ -62,9 +62,10 @@ class DataStore:
         """
         Get a list of all keys in the store
         """
-        with self._lock:
+        with self._lock:                                        
             self._purge_expired()
             return list(self._store.keys())
+        
     """
     -----------------------STRING OPERATORS-------------------------
     """
