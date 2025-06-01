@@ -35,12 +35,10 @@ class LFU:
             "n_reuse_evicts" : self._n_reuse_evicts,
             "delta"          : self._delta,
         }
-
-    def update(self, key: str, is_set: bool) -> str | None:
+        
+    def _touch(self, key: str, is_set: bool) -> None:
         key_list = self._kv_store._get_key_list()   # live keys in datastore
         in_cache = key in key_list
-        
-        # logger.info(f"freq_map: {self._freq_map}")
 
         # ----------------- METRIC BOOKKEEPING ---------------------
         if is_set:
@@ -63,18 +61,20 @@ class LFU:
         else:
             if not is_set:                   # GET miss on absent key -> done
                 return None
-
-            # Insert new key; evict if full first
-            if len(self._freq_map) >= self._capacity:
-                victim = self._evict()
-            else:
-                victim = None
             self._add_new_key(key)
-
+            
         # sync kv_store with freq_map
         self._remove_stale_keys(key_list)
+        
 
-        return victim
+    def update(self, key: str, is_set: bool) -> str | None:
+        self._touch(key, is_set)
+        victims = []
+        while len(self._freq_map) > self._capacity:
+            logger.debug(f"{len(self._freq_map), self._capacity}")
+            victim = self._evict()
+            victims.append(victim)
+        return victims
 
     # helpers
     def _increment_freq(self, key: str) -> None:
@@ -103,7 +103,9 @@ class LFU:
         """
         logger.info(f"Freq map before eviction: {self._freq_map}")
         victims = self._groups[self._min_freq]
+        logger.debug(f"Victims with frequency {self._min_freq}: {victims}")
         victim  = victims.popleft()               # oldest within min-freq
+        logger.debug(f"Victim selected: {victim} with frequency {self._min_freq}")
         if not victims:
             del self._groups[self._min_freq]
 

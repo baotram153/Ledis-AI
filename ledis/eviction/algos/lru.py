@@ -95,6 +95,7 @@ class LRU:
         # update LRU queue to sync with kv_stote (deletion or expiration noticed)
         if key_len < len(self._lru_queue):
             self._lru_queue = [k for k in self._lru_queue if k in key_list]
+        logger.debug(f"LRU queue after touch: {self._lru_queue}")
         
         
     def update(self, key:str, is_set:bool) -> None:
@@ -103,10 +104,15 @@ class LRU:
         """
         self._touch(key, is_set)
         # if lru queue exceeds capacity, evict the least recently used key
-        if len(self._lru_queue) > self._capacity:
-            key = self.evict()
-            return key
-        return None
+        logger.debug(f"LRU queue before eviction check: {self._lru_queue}, capacity: {self._capacity}")
+        # if len(self._lru_queue) > self._capacity:
+        #     key = self.evict()
+        #     return key
+        keys = []
+        while len(self._lru_queue) > self._capacity:
+            victim = self.evict()
+            keys.append(victim)
+        return keys
             
     def evict(self) -> str:
         """

@@ -57,17 +57,21 @@ class Executor:
                 if cmd == "smart_eviction": 
                     if int(args[0]) > 0: self.enable_eviction()
                     else: self.disable_eviction()
-                if self._eviction_enabled and cmd not in ["smart_eviction", "keys", "flushdb"]:
-                    set_key = args[0]
-                    is_set = 1 if cmd in ["set", "rpush"] else 0
-                    evicted_key = self._eviction_manager.evict(set_key, is_set)
-                    if evicted_key:
-                        limit = self._eviction_manager.get_eviction_window()
-                        logger.info(f"Evicted key: {evicted_key}")
-                        end_result += f"\nSmart eviction: Number of keys reached limit {limit}. Key `{evicted_key}` has been evicted."
-                        
-                logger.debug(f"Executed command: {cmd} with args: {args}, result: {result}")
+                if cmd not in ["smart_eviction", "keys", "flushdb"]:
+                    if not self._eviction_enabled:
+                        # update eviction manager with the key
+                        self._eviction_manager.update(args[0], cmd in ["set", "rpush"])
+                    else:
+                        set_key = args[0]
+                        is_set = 1 if cmd in ["set", "rpush"] else 0
+                        evicted_keys = self._eviction_manager.evict(set_key, is_set)    # list
+                        if evicted_keys != []:
+                            limit = self._eviction_manager.get_eviction_window()
+                            logger.info(f"Evicted key: {evicted_keys}")
+                            for evicted_key in evicted_keys:
+                                end_result += f"\nSmart eviction: Number of keys reached limit {limit}. Key `{evicted_key}` has been evicted."
                 
+                logger.debug(f"Executed command: {cmd} with args: {args}, result: {result}")
                 return end_result
             else:
                 logger.debug(f"Unknown command: {cmd}")

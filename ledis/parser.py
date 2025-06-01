@@ -1,5 +1,6 @@
 from typing import Any, Optional, Tuple
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,10 @@ class CommandParser:
         Parse a command string
         Return a tupe of (command_name, args)
         """
-        parts = command.strip().split()
+        pattern = r'"([^"]*)"|\'([^\']*)\'|(\S+)'
+        matches = re.findall(pattern, command)
+        parts = [g1 or g2 or g3 for (g1, g2, g3) in matches]
+        
         logger.debug(f"Parts after split: {parts}")
         if not parts:
             raise ValueError("Empty command")

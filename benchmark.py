@@ -58,10 +58,11 @@ class Benchmarker:
                 # handle eviction if enabled
                 key = args[0]
                 is_set = 1 if cmd == "set" else 0
-                evicted_key = self._eviction_manager.evict(key, is_set)
-                if evicted_key:
+                evicted_keys = self._eviction_manager.evict(key, is_set)
+                if evicted_keys != []:
                     limit = self._eviction_manager.get_eviction_window()
-                    result = f"\nSmart eviction: Number of keys reached limit {limit}. Key `{evicted_key}` has been evicted."
+                    for evicted_key in evicted_keys:
+                        result = f"\nSmart eviction: Number of keys reached limit {limit}. Key `{evicted_key}` has been evicted."
                     logger.info(result)
             else:
                 logger.debug(f"Unknown command: {cmd}")
