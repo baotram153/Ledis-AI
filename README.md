@@ -1,11 +1,12 @@
-Ledis-AI
-
 # Ledis-AI
 
-A lightweight, Redis-inspired in-memory data-store **enhanced with
-AI Features**.
+A lightweight, Redis-inspired in-memory data-store **enhanced with AI Features**.
 
 Live Demo: http://ledis.southeastasia.cloudapp.azure.com:6379/
+
+**Important Note**
+- Because Ledis is implemented in a backend-frontend manner like the requirements has specified. Deploying the backend on the server means that **a single data store is created**. And because this is a simple application, you can think of this as a common database of a product (a single source of truth) that every developers have access to and every change they make is a global change that other developers can see.
+- So you can see that some keys have existed when you access the database, and your changes to the database is permanent (the state will remain even if you reload the CLI page). If you want to refresh the data store, just run the command `FLUSHDB` and `SMART_EVICTION -1` (disable eviction) before any commands.
 
 An example `workload.txt` file used to train the model is available [here](https://drive.google.com/drive/u/0/folders/1--yJ20Ys6xDgH_6Q-95Et_3kVNrHQpRh)
 
