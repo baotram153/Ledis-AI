@@ -31,7 +31,12 @@ pip install -r requirements.txt      # flask, stable-baselines3, gymnasium …
 # 2. Run the server
 python -m ledis.server               # defaults to 127.0.0.1:6379
 
-# 3. Try it
+# 3. Add your Gemini API key to the .env file
+```
+GEMINI_API_KEY=...
+```
+
+# 4. Try it
 $ ledis-cli                           # tiny wrapper in /scripts
 > SET foo bar
 OK
